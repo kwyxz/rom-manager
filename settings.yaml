@@ -1,0 +1,15 @@
+# settings for rom-manager
+
+mame_location: '/usr/local/games/mame'
+
+remote_hw:
+  - id: '0'
+    name: 'Steamdeck'
+    ip_addr: '192.168.1.219'
+    port: '22'
+    protocol: 'ssh'
+  - id: '1'
+    name: 'Playstation Vita'
+    ip_addr: '192.168.1.12'
+    port: '1337'
+    protocol: 'ftp'

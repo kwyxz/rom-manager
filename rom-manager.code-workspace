@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../attract-tools"
+		},
+		{
+			"path": "../deck-tools"
+		}
+	],
+	"settings": {}
+}
