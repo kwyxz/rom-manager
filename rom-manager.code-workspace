@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "../deck-tools"
+		},
+		{
+			"path": "../cloneromsets"
 		}
 	],
 	"settings": {}

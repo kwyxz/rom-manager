@@ -1,7 +1,18 @@
 #!/usr/bin/env python3
 
+"""
+manage roms on specific devices
+"""
+
 import os
 import yaml
+import cli_arguments
+
+def check_folder(folder):
+    if os.path.exists(folder):
+        extract_romname(folder)
+    else:
+        die("Error: folder {} does not exist, skipping".format(folder))
 
 def load_settings():
     user_settings = "$HOME/.config/rom-manager/settings.yaml"
@@ -14,7 +25,8 @@ def load_settings():
 
 def main():
     settings = load_settings()
-    print(settings)
+    args = cli_arguments.parse()
+    print(args)
 
 if __name__ == "__main__":
     main()
