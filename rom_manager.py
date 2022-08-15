@@ -82,16 +82,48 @@ def create_sets(romlist):
                     gameset.append(rom)
                     previous_basename = basename
             fullset.append(gameset)
-    msg_ok(fullset)
     return fullset
 
+def find_country(game,country):
+    game_by_country = []
+    not_found = True
+    for rom in game:
+        if country in rom:
+            game_by_country.append(rom)
+            not_found = False
+    if len(game_by_country)>0:
+        return game_by_country
+    else:
+        if country == 'USA':
+            find_country(game,'France')
+        elif country == 'France':
+            find_country(game,'Europe')
+        elif country == 'Europe':
+            find_country(game,'World')
+        elif country == 'World':
+            find_country(game, 'Japan')
+
+def select_dump(folder):
+    dumps = []
+    """find the most appropriate dump for each game"""
+    for game in folder:
+        best = find_country(game,'USA')
+        dumps.append(best)
+    return dumps
+
 def sync_roms(folder):
-    """list roms in folder"""
+    """sync selected roms to remote folder"""
+    # list all roms in folder
     folder_romlist = os.listdir(folder)
+    # remove unwanted roms
     folder_romlist = purge(folder_romlist)
-    msg_error(folder_romlist)
+    # sort list
     folder_romlist.sort()
-    romlist_sets = create_sets(folder_romlist)
+    # create sets by game
+    folder_romlist = create_sets(folder_romlist)
+    # select unique game by country and revision
+    folder_romlist = select_dump(folder_romlist)
+    msg_ok(folder_romlist)
 
 ### settings management ###
 def load_settings():
