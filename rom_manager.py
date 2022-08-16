@@ -43,6 +43,7 @@ def purge(romlist):
         '(Beta',
         '(NP',
         '(Alt',
+        '(Sample',
         'Virtual Console',
         'Switch Online',
         'Channel)',
@@ -70,12 +71,8 @@ def create_sets(romlist):
     fullset = []
     previous_basename = ''
     for rom in romlist:
-        msg_debug(f"extracting game name from {rom}")
         basename = extract_basename(rom)
-        msg_debug(f"base name {basename}")
-        if basename == previous_basename:
-            msg_debug(f"set for {basename} already taken care of")
-        else:
+        if basename != previous_basename:
             gameset = []
             for rom in romlist:
                 if basename in rom:
@@ -84,34 +81,40 @@ def create_sets(romlist):
             fullset.append(gameset)
     return fullset
 
+def find_revision(game):
+    game.sort()
+    for rom in game:
+        if '(Rev' in rom:
+            return rom
+    return game[-1]
+
 def find_country(game,country):
-    game_by_country = []
-    not_found = True
+    game_country = []
     for rom in game:
         if country in rom:
-            game_by_country.append(rom)
-            not_found = False
-    if len(game_by_country)>0:
-        return game_by_country
+            game_country.append(rom)
+    if len(game_country)>0:
+        return game_country
     else:
+        # we test every country before pushing following a specific order
         if country == 'USA':
-            find_country(game,'France')
+            return find_country(game,'France')
         elif country == 'France':
-            find_country(game,'Europe')
+            return find_country(game,'Europe')
         elif country == 'Europe':
-            find_country(game,'World')
+            return find_country(game,'World')
         elif country == 'World':
-            find_country(game, 'Japan')
+            return find_country(game, 'Japan')
 
-def select_dump(folder):
+def select_unique(folder):
     dumps = []
     """find the most appropriate dump for each game"""
     for game in folder:
-        best = find_country(game,'USA')
+        best = find_revision(find_country(game,'USA'))
         dumps.append(best)
     return dumps
 
-def sync_roms(folder):
+def sync_consoleroms(folder):
     """sync selected roms to remote folder"""
     # list all roms in folder
     folder_romlist = os.listdir(folder)
@@ -122,7 +125,7 @@ def sync_roms(folder):
     # create sets by game
     folder_romlist = create_sets(folder_romlist)
     # select unique game by country and revision
-    folder_romlist = select_dump(folder_romlist)
+    folder_romlist = select_unique(folder_romlist)
     msg_ok(folder_romlist)
 
 ### settings management ###
@@ -143,7 +146,7 @@ def main(args,settings):
     if args.console:
         for folder in args.console:
             msg_debug(f"checking folder {folder}")
-            sync_roms(folder)
+            sync_consoleroms(folder)
 
 if __name__ == "__main__":
     args = cli_arguments.parse()
