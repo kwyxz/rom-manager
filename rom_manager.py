@@ -33,22 +33,7 @@ def msg_ok(msg):
 ### romlist management functions
 def purge(romlist):
     """remove roms using word from banned list in their filename"""
-    banned = [
-        'BIOS',
-        'Enhancement Chip',
-        '(Unl',
-        '(Demo',
-        '(Hack',
-        '(Program',
-        '(Beta',
-        '(NP',
-        '(Alt',
-        '(Sample',
-        'Virtual Console',
-        'Switch Online',
-        'Channel)',
-        'Collection)'
-    ]
+    banned = settings['banned_words']
     clean = []
     for rom in romlist:
         found = False
@@ -83,34 +68,38 @@ def create_sets(romlist):
 
 def find_revision(game):
     game.sort()
+    revisions = []
     for rom in game:
+        # find revisions
         if '(Rev' in rom:
-            return rom
+            revisions.append(rom)
+    if len(revisions)>0:
+        revisions.sort()
+        # use the latest revision
+        return revisions[-1]
     return game[-1]
 
-def find_country(game,country):
+def find_country(game,country_index):
     game_country = []
     for rom in game:
-        if country in rom:
+        try:
+            if settings['country_list'][country_index] in rom:
+                game_country.append(rom)
+        except IndexError:
             game_country.append(rom)
     if len(game_country)>0:
         return game_country
     else:
         # we test every country before pushing following a specific order
-        if country == 'USA':
-            return find_country(game,'France')
-        elif country == 'France':
-            return find_country(game,'Europe')
-        elif country == 'Europe':
-            return find_country(game,'World')
-        elif country == 'World':
-            return find_country(game, 'Japan')
+        while country_index < len(settings['country_list']):
+            return find_country(game,country_index+1)
 
 def select_unique(folder):
     dumps = []
     """find the most appropriate dump for each game"""
     for game in folder:
-        best = find_revision(find_country(game,'USA'))
+        # start with the first country in the list
+        best = find_revision(find_country(game,0))
         dumps.append(best)
     return dumps
 
@@ -124,6 +113,7 @@ def sync_consoleroms(folder):
     folder_romlist.sort()
     # create sets by game
     folder_romlist = create_sets(folder_romlist)
+    msg_debug(folder_romlist)
     # select unique game by country and revision
     folder_romlist = select_unique(folder_romlist)
     msg_ok(folder_romlist)

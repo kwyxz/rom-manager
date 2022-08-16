@@ -1,16 +1,38 @@
 # settings for rom-manager
 
-mame_location: '/usr/local/games/mame'
+country_list:
+  - 'USA'
+  - 'France'
+  - 'Europe'
+  - 'World'
+  - 'Japan'
+
+banned_words:
+  - 'BIOS'
+  - 'Enhancement Chip'
+  - '(Unl'
+  - '(Demo'
+  - '(Hack'
+  - '(Program'
+  - '(Beta'
+  - '(NP'
+  - '(Alt'
+  - '(Sample'
+  - '(Germany)'
+  - '(Italy)'
+  - '(Spain)'
+  - 'Virtual Console'
+  - 'Switch Online'
+  - 'Sega Channel'
+  - 'Classic Collection'
 
 remote_hw:
-  - id: '0'
-    name: 'Steamdeck'
+  - name: 'Steamdeck'
     protocol: 'ssh'
     ip_addr: '192.168.1.219'
     port: '22'
     rom_path: '/home/deck/Emulation/roms'
-  - id: '1'
-    name: 'Playstation Vita'
+  - name: 'Playstation Vita'
     protocol: 'ftp'
     ip_addr: '192.168.1.12'
     port: '1337'
