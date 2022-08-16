@@ -5,6 +5,7 @@ manage roms on specific devices
 """
 
 import os
+import sys
 import yaml
 import cli_arguments
 
@@ -20,7 +21,7 @@ def msg_info(msg):
 
 def msg_debug(msg):
     """print only in verbose mode"""
-    if args.debug:
+    if args.verbose:
         print(f"\033[33mDEBUG\033[m: {msg}")
     else:
         pass
@@ -103,20 +104,34 @@ def select_unique(folder):
         dumps.append(best)
     return dumps
 
-def sync_consoleroms(folder):
+def push_ssh(folder,remote):
+    msg_ok(f"SSH push to {remote['user']}@{remote['ip_addr']}:{remote['port']}/{remote['rom_path']}")
+    print(folder)
+
+def push_ftp(folder,remote):
+    msg_ok(f"FTP push to {remote['user']}@{remote['ip_addr']}:{remote['port']}/{remote['rom_path']}")
+    print(folder)
+
+def push_to_remote(folder):
+    remote_host = settings['remote_hw'][args.remote]
+    if remote_host['protocol'] == 'ssh':
+        push_ssh(folder,remote_host)
+    elif remote_host['protocol'] == 'ftp':
+        push_ftp(folder,remote_host)
+    else:
+        msg_error("something went very wrong")
+        sys.exit(1)
+
+def sync_consoleroms(folders):
     """sync selected roms to remote folder"""
-    # list all roms in folder
-    folder_romlist = os.listdir(folder)
-    # remove unwanted roms
-    folder_romlist = purge(folder_romlist)
-    # sort list
-    folder_romlist.sort()
-    # create sets by game
-    folder_romlist = create_sets(folder_romlist)
-    msg_debug(folder_romlist)
-    # select unique game by country and revision
-    folder_romlist = select_unique(folder_romlist)
-    msg_ok(folder_romlist)
+    for folder in folders:
+        # list all roms in folder and remove some based on keywords
+        folder_romlist = purge(os.listdir(folder))
+        # sort list
+        folder_romlist.sort()
+        # create sets by game and select unique one
+        folder_romlist = select_unique(create_sets(folder_romlist))
+        return push_to_remote(folder_romlist)
 
 ### settings management ###
 def load_settings():
@@ -125,6 +140,7 @@ def load_settings():
     if os.path.exists(user_settings):
         settings_file = user_settings
     else:
+        # ideally use a local file because this is weak
         settings_file = 'settings.yaml'
     with open(settings_file) as file:
         msg_debug(f"loading settings file {settings_file}")
@@ -133,10 +149,26 @@ def load_settings():
 ### main loop ###
 def main(args,settings):
     """main function"""
-    if args.console:
-        for folder in args.console:
-            msg_debug(f"checking folder {folder}")
-            sync_consoleroms(folder)
+    print(args)
+    # remote hardware will always be useful
+    if args.listhw:
+        for key,value in enumerate(settings['remote_hw']):
+            print(f"\n\033[1mremote\033[m: {value}")
+            x = settings['remote_hw'][value]
+            print(f"\t({x['name']})")
+            print(f"\t{x['protocol']}@{x['ip_addr']}:{x['port']}")
+            print(f"\t{x['rom_path']}")
+        sys.exit(0)
+    else:
+        try:
+            if args.console:
+                for folder in args.console:
+                    sync_consoleroms(folder)
+            else:
+                msg_error(f"argument error")
+                sys.exit(1)
+        except KeyError:
+            msg_error(f"{args.remote} is not a valid remote identifier")
 
 if __name__ == "__main__":
     args = cli_arguments.parse()

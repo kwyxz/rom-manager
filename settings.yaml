@@ -27,13 +27,17 @@ banned_words:
   - 'Classic Collection'
 
 remote_hw:
-  - name: 'Steamdeck'
+  deck:
+    name: 'Steamdeck'
     protocol: 'ssh'
     ip_addr: '192.168.1.219'
     port: '22'
+    user: 'deck'
     rom_path: '/home/deck/Emulation/roms'
-  - name: 'Playstation Vita'
+  vita:
+    name: 'Playstation Vita'
     protocol: 'ftp'
     ip_addr: '192.168.1.12'
     port: '1337'
+    user: 'anonymous'
     rom_path: 'uma0:/roms'

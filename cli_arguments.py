@@ -17,10 +17,12 @@ def dir_path(path):
 def parse():
     """the parsing mechanism"""
     parser = argparse.ArgumentParser(description="Manage romsets on handheld devices")
-    parser.add_argument('-d','--debug', action='store_true', help='print out debug messages')
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument('-c', '--console', nargs='*', type=dir_path, action='store', help='directory with console games')
-
+    parser.add_argument('-v','--verbose', action='store_true', help='print out debug messages')
+    hw = parser.add_mutually_exclusive_group(required=True)
+    hw.add_argument('-l', '--listhw', action='store_true', help='list remote hardwares')
+    hw.add_argument('-r', '--remote', type=str, action='store', help='name of remote hardware')
+    parser.add_argument('-c', '--console', nargs=1, type=dir_path, action='append', metavar='<console roms directory>', help='directory with console games')
+    parser.add_argument('-a', '--arcade', nargs=1, type=dir_path, action='append', metavar='<arcade roms directory>', help='directory with arcade games')
     args = parser.parse_args()
 
     return args
