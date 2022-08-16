@@ -149,7 +149,6 @@ def load_settings():
 ### main loop ###
 def main(args,settings):
     """main function"""
-    print(args)
     # remote hardware will always be useful
     if args.listhw:
         for key,value in enumerate(settings['remote_hw']):
