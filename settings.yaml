@@ -1,5 +1,8 @@
 # settings for rom-manager
 
+mame_data_file: '/usr/local/games/mame/mame.xml'
+fbneo_data_file: '/usr/local/games/fbneo/fbneo.dat'
+
 country_list:
   - 'USA'
   - 'France'
