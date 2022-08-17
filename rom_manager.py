@@ -9,16 +9,19 @@ import sys
 import yaml
 import cli_arguments
 
-### Error messages
+### output
+
+# error messages
 def msg_error(msg):
     """print an error message"""
     print(f"\033[31mERROR\033[m: {msg}")
 
-### Info messages
+# info messages
 def msg_info(msg):
     """print an info message"""
     print(f"\033[33mINFO\033[m: {msg}")
 
+# debug messages
 def msg_debug(msg):
     """print only in verbose mode"""
     if args.verbose:
@@ -26,12 +29,28 @@ def msg_debug(msg):
     else:
         pass
 
-### OK messages
+# OK messages
 def msg_ok(msg):
     """print an OK message"""
     print(f"\033[32mOK\033[m: {msg}")
 
-### romlist management functions
+### settings management ###
+
+def load_settings():
+    """load settings from global conf file or local conf file"""
+    user_settings = "$HOME/.config/rom-manager/settings.yaml"
+    if os.path.exists(user_settings):
+        settings_file = user_settings
+    else:
+        # ideally use a local file because this is weak
+        settings_file = 'settings.yaml'
+    with open(settings_file) as file:
+        msg_debug(f"loading settings file {settings_file}")
+        return yaml.safe_load(file)
+
+### rom management functions
+
+# expunge roms by keyword
 def purge(romlist):
     """remove roms using word from banned list in their filename"""
     banned = settings['banned_words']
@@ -48,6 +67,7 @@ def purge(romlist):
             clean.append(rom)
     return clean
 
+# extract base name to create sets of similar game
 def extract_basename(rom):
     """extract base rom name from file name"""
     return rom.split('(')[0] + '('
@@ -67,6 +87,7 @@ def create_sets(romlist):
             fullset.append(gameset)
     return fullset
 
+# select rom by revision
 def find_revision(game):
     game.sort()
     revisions = []
@@ -80,6 +101,7 @@ def find_revision(game):
         return revisions[-1]
     return game[-1]
 
+# select rom by country
 def find_country(game,country_index):
     game_country = []
     for rom in game:
@@ -95,6 +117,7 @@ def find_country(game,country_index):
         while country_index < len(settings['country_list']):
             return find_country(game,country_index+1)
 
+# select rom by country and revision
 def select_unique(folder):
     dumps = []
     """find the most appropriate dump for each game"""
@@ -104,15 +127,15 @@ def select_unique(folder):
         dumps.append(best)
     return dumps
 
+# push roms to remote
 def push_ssh(folder,remote):
-    msg_ok(f"SSH push to {remote['user']}@{remote['ip_addr']}:{remote['port']}/{remote['rom_path']}")
-    print(folder)
+    msg_debug(f"SSH push to {remote['user']}@{remote['ip_addr']}:{remote['port']}/{remote['rom_path']}")
 
 def push_ftp(folder,remote):
-    msg_ok(f"FTP push to {remote['user']}@{remote['ip_addr']}:{remote['port']}/{remote['rom_path']}")
-    print(folder)
+    msg_debug(f"FTP push to {remote['user']}@{remote['ip_addr']}:{remote['port']}/{remote['rom_path']}")
 
 def push_to_remote(folder):
+    # remote is exclusive in options
     remote_host = settings['remote_hw'][args.remote]
     if remote_host['protocol'] == 'ssh':
         push_ssh(folder,remote_host)
@@ -122,8 +145,9 @@ def push_to_remote(folder):
         msg_error("something went very wrong")
         sys.exit(1)
 
+# main sync functions
 def sync_consoleroms(folders):
-    """sync selected roms to remote folder"""
+    """sync selected console roms to remote folder"""
     for folder in folders:
         # list all roms in folder and remove some based on keywords
         folder_romlist = purge(os.listdir(folder))
@@ -133,26 +157,18 @@ def sync_consoleroms(folders):
         folder_romlist = select_unique(create_sets(folder_romlist))
         return push_to_remote(folder_romlist)
 
-### settings management ###
-def load_settings():
-    """load settings from global conf file or local conf file"""
-    user_settings = "$HOME/.config/rom-manager/settings.yaml"
-    if os.path.exists(user_settings):
-        settings_file = user_settings
-    else:
-        # ideally use a local file because this is weak
-        settings_file = 'settings.yaml'
-    with open(settings_file) as file:
-        msg_debug(f"loading settings file {settings_file}")
-        return yaml.safe_load(file)
+def sync_arcaderoms(folders):
+    """sync selected arcade roms to remote folder"""
+    # generate list of clones using MAME
+    msg_debug('arcade')
 
 ### main loop ###
 def main(args,settings):
     """main function"""
-    # remote hardware will always be useful
     if args.listhw:
         for key,value in enumerate(settings['remote_hw']):
             print(f"\n\033[1mremote\033[m: {value}")
+            # remote hardware will always be useful
             x = settings['remote_hw'][value]
             print(f"\t({x['name']})")
             print(f"\t{x['protocol']}@{x['ip_addr']}:{x['port']}")
@@ -163,6 +179,9 @@ def main(args,settings):
             if args.console:
                 for folder in args.console:
                     sync_consoleroms(folder)
+            elif args.arcade:
+                for folder in args.arcade:
+                    sync_arcaderoms(folder)
             else:
                 msg_error(f"argument error")
                 sys.exit(1)
