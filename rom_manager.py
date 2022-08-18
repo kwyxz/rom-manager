@@ -157,10 +157,13 @@ def sync_consoleroms(folders):
         folder_romlist = select_unique(create_sets(folder_romlist))
         return push_to_remote(folder_romlist)
 
-def sync_arcaderoms(folders):
+def find_machine(game):
+    return True
+
+def sync_arcaderoms(gamelist):
     """sync selected arcade roms to remote folder"""
-    # generate list of clones using MAME
-    msg_debug('arcade')
+    for game in gamelist:
+        machine = find_machine(game)
 
 ### main loop ###
 def main(args,settings):
@@ -180,8 +183,8 @@ def main(args,settings):
                 for folder in args.console:
                     sync_consoleroms(folder)
             elif args.arcade:
-                for folder in args.arcade:
-                    sync_arcaderoms(folder)
+                for gamelist in args.arcade:
+                    sync_arcaderoms(gamelist)
             else:
                 msg_error(f"argument error")
                 sys.exit(1)
