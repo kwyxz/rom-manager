@@ -19,10 +19,13 @@ def info(text):
     return True
 
 # debug messages
-def debug(text):
+def debug(text,debug):
     """print only in verbose mode"""
-    print(f"\033[33mDEBUG\033[m: {text}")
-    return True
+    if debug:
+        print(f"\033[33mDEBUG\033[m: {text}")
+        return True
+    else:
+        return False
 
 # OK messages
 def ok(text):

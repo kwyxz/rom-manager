@@ -33,5 +33,5 @@ def main(args,conf):
 
 if __name__ == "__main__":
     ARGS = cli_args.parse()
-    CONF = settings.load()
+    CONF = settings.load(ARGS.verbose)
     main(ARGS,CONF)
