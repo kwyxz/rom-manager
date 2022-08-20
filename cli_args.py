@@ -24,5 +24,4 @@ def parse():
     parser.add_argument('-c', '--console', nargs=1, type=dir_path, action='append', metavar='<console roms directory>', help='directory with console games')
     parser.add_argument('-a', '--arcade', nargs='+', action='append', metavar='<arcade game name>', help='name of an arcade game')
     args = parser.parse_args()
-
     return args
