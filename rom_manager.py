@@ -15,6 +15,9 @@ def main(args,conf):
     """main function"""
     if args.verbose:
         DEBUG = True
+    else:
+        DEBUG = False
+    # read the other arguments
     if args.listhw:
         msg.hw(conf)
     else:
@@ -22,7 +25,7 @@ def main(args,conf):
         try:
             if args.console:
                 for local_folder in args.console:
-                    console.sync(local_folder,remote_hw,conf)
+                    console.sync(local_folder,remote_hw,conf,DEBUG)
             elif args.arcade:
                 for gamelist in args.arcade:
                     curate_arcaderoms(gamelist)

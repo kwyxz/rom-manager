@@ -4,16 +4,26 @@
 handle everything related to pushing things to a remote destination
 """
 
+import os
 import paramiko
 import msg
 
-def push_ssh(local_file,remote_folder,remote_ip,remote_port,remote_user):
+def push_ssh(local_file,remote_file,remote_ip,remote_port,remote_user):
     sshcon = paramiko.SSHClient()
     sshcon.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
         sshcon.connect(remote_ip, port=remote_port, username=remote_user)
         sftp=sshcon.open_sftp()
-        sftp.put(local_file,remote_folder,callback=None,confirm=True)
+        try:
+            sftp.stat(os.path.dirname(remote_file))
+        except FileNotFoundError:
+            sftp.mkdir(os.path.dirname(remote_file))
+        try:
+            sftp.stat(remote_file)
+            msg.info(f"SKIPPED: already present {remote_file}")
+        except FileNotFoundError:
+            sftp.put(local_file,remote_file,callback=None,confirm=True)
+            msg.ok(f"PUSHED: {remote_file}")
     except paramiko.ssh_exception.NoValidConnectionsError:
         msg.die("Unable to connect to the remote host, check the network parameters")
 

@@ -12,7 +12,7 @@ import msg
 import remote_host
 
 # expunge roms by keyword
-def purge(romlist, banned):
+def purge(romlist, banned,debug):
     """remove roms using word from banned list in their filename"""
     clean = []
     for rom in romlist:
@@ -22,7 +22,7 @@ def purge(romlist, banned):
                 found = True
                 break
         if found:
-            msg.debug(f"banned rom {rom} due to keyword {key}")
+            msg.debug(f"banned rom {rom} due to keyword {key}",debug)
         else:
             clean.append(rom)
     return clean
@@ -93,10 +93,10 @@ def trim_path(folder):
     return folder.split('/')[-1]
 
 # main sync functions
-def sync(local_folder,remote,conf):
+def sync(local_folder,remote,conf,debug):
     """sync selected console roms to remote folder"""
     # list all roms in folder and remove some based on keywords
-    romlist = purge(os.listdir(local_folder[0]),conf['banned_words'])
+    romlist = purge(os.listdir(local_folder[0]),conf['banned_words'],debug)
     # sort list
     romlist.sort()
     # create sets by game and select unique one
