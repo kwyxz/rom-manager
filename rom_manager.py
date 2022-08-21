@@ -13,10 +13,7 @@ import console
 ### main loop ###
 def main(args,conf):
     """main function"""
-    if args.verbose:
-        DEBUG = True
-    else:
-        DEBUG = False
+    debug = args.verbose
     # read the other arguments
     if args.listhw:
         msg.hw(conf)
@@ -25,11 +22,24 @@ def main(args,conf):
         try:
             if args.console:
                 for local_folder in args.console[0]:
-                    console.sync(local_folder,remote_hw,conf['banned_words'],conf['country_list'],DEBUG)
+                    console.sync(
+                        local_folder,
+                        remote_hw,
+                        conf['banned_words'],
+                        conf['country_list'],
+                        debug
+                    )
             elif args.arcade:
-                    arcade.curate(args.arcade[0],remote_hw,conf['banned_arcade_games'],conf['mame_rom_path'],conf['mame_data_file'],DEBUG)
+                arcade.curate(
+                    args.arcade[0],
+                    remote_hw,
+                    conf['banned_arcade_games'],
+                    conf['mame_rom_path'],
+                    conf['mame_data_file'],
+                    debug
+                )
             else:
-                msg.die(f"argument error")
+                msg.die("argument error")
         except KeyError:
             msg.die(f"{args.remote} is not a valid remote identifier")
 

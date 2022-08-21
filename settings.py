@@ -5,9 +5,9 @@ manage settings, load and maybe in the future save
 """
 
 import os
-import msg
-import yaml
 from pathlib import Path
+import yaml
+import msg
 
 def load(debug):
     """load settings from global conf file or local conf file"""
@@ -16,6 +16,6 @@ def load(debug):
         conf_file = user_conf
     else:
         conf_file = os.path.abspath(os.path.dirname(__file__)) + '/settings.yaml'
-    with open(conf_file) as file:
+    with open(conf_file, encoding="utf-8") as file:
         msg.debug(f"loading settings file {conf_file}",debug)
         return yaml.safe_load(file)

@@ -17,12 +17,12 @@ def purge(romlist,banned,debug):
     clean = []
     for rom in romlist:
         found = False
-        for key in banned:
-            if key in rom:
+        for banword in banned:
+            if banword in rom:
                 found = True
                 break
         if found:
-            msg.debug(f"SKIPPED:\tgame {rom}, keyword {key}",debug)
+            msg.debug(f"SKIPPED:\tgame {rom}, keyword {banword}",debug) # pylint: disable=undefined-loop-variable
         else:
             clean.append(rom)
     return clean
@@ -42,16 +42,17 @@ def create_sets(romlist,debug):
         basename = extract_basename(rom,debug)
         if basename != previous_basename:
             gameset = []
-            for rom in romlist:
-                if basename in rom:
-                    msg.debug(f"FOUND:\tadding rom {rom}",debug)
-                    gameset.append(rom)
+            for game in romlist:
+                if basename in game:
+                    msg.debug(f"FOUND:\tadding rom {game}",debug)
+                    gameset.append(game)
                     previous_basename = basename
             fullset.append(gameset)
     return fullset
 
 # select rom by revision
 def find_revision(game):
+    """find most recent revision of game"""
     game.sort()
     revisions = []
     for rom in game:
@@ -66,6 +67,7 @@ def find_revision(game):
 
 # select rom by country
 def find_country(game,country_list,country_index):
+    """find most appropriate country based off list in settings"""
     game_country = []
     for rom in game:
         try:
@@ -75,15 +77,14 @@ def find_country(game,country_list,country_index):
             game_country.append(rom)
     if len(game_country)>0:
         return game_country
-    else:
-        # we test every country before pushing following a specific order
-        while country_index < len(country_list):
-            return find_country(game,country_list,country_index+1)
+    # we test every country before pushing following a specific order
+    while country_index < len(country_list):
+        return find_country(game,country_list,country_index+1)
 
 # select rom by country and revision
 def select_unique(gamelist,country_list):
-    dumps = []
     """find the most appropriate dump for each game"""
+    dumps = []
     for game in gamelist:
         # start with the first country in the list
         best = find_revision(find_country(game,country_list,0))
@@ -91,14 +92,15 @@ def select_unique(gamelist,country_list):
     return dumps
 
 def trim_path(folder):
+    """trim folder path and keep last"""
     if folder[-1] == '/':
         folder = folder.rstrip(folder[-1])
     return folder.split('/')[-1]
 
 # main sync functions
 def sync(folder,remote,banned_words,country_list,debug):
-    local_folder = os.path.abspath(folder)
     """sync selected console roms to remote folder"""
+    local_folder = os.path.abspath(folder)
     # list all roms in folder and remove some based on keywords
     romlist = purge(os.listdir(local_folder),banned_words,debug)
     # sort list
@@ -106,4 +108,9 @@ def sync(folder,remote,banned_words,country_list,debug):
     # create sets by game and select unique one
     romset = select_unique(create_sets(romlist,debug),country_list)
     # push romsets once they have been curated
-    remote_host.pushromset(romset,local_folder,remote['rom_path'] + '/' + trim_path(local_folder),remote,debug)
+    remote_host.pushromset(
+        romset,
+        local_folder,
+        remote['rom_path'] + '/' + trim_path(local_folder),
+        remote,debug
+    )

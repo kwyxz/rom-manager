@@ -4,16 +4,16 @@
 handle everything related to pushing things to a remote destination
 """
 
-import os
 import paramiko
 import msg
 
-def push_romset_ssh(romset,local,dest,ip,port,user,debug):
+def push_romset_ssh(romset,local,dest,ip_addr,port,user,debug): # pylint: disable=too-many-arguments
+    """push romset using SSH"""
     sshcon = paramiko.SSHClient()
     sshcon.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
-        msg.debug(f"SSH:\tconnect to {user}@{ip}:{port}{dest}",debug)
-        sshcon.connect(ip, port=port, username=user)
+        msg.debug(f"SSH:\tconnect to {user}@{ip_addr}:{port}{dest}",debug)
+        sshcon.connect(ip_addr, port=port, username=user)
         sftp=sshcon.open_sftp()
         for rom in romset:
             try:
@@ -42,9 +42,13 @@ def push_romset_ssh(romset,local,dest,ip,port,user,debug):
         msg.die("Unable to connect to the remote host, check the network parameters")
 
 def push_romset_ftp(folder,rom,remote):
-    msg.ok(f"FTP push to {remote['user']}@{remote['ip_addr']}:{remote['port']}/{remote['rom_path']}")
+    """push romset using FTP"""
+    msg.ok(f"{folder}/{rom}")
+    msg.ok(f"FTP push to {remote['user']}@{remote['ip_addr']}: \
+        {remote['port']}/{remote['rom_path']}")
 
 def pushromset(romset,local,folder,remote,debug):
+    """select push protocol based on settings"""
     # remote is exclusive in options
     if remote['protocol'] == 'ssh':
         push_romset_ssh(romset,local,folder,remote['ip_addr'],remote['port'],remote['user'],debug)

@@ -19,16 +19,15 @@ def info(text):
     return True
 
 # debug messages
-def debug(text,debug):
+def debug(text,flag):
     """print only in verbose mode"""
-    if debug:
+    if flag:
         print(f"\033[33mDEBUG\033[m: {text}")
         return True
-    else:
-        return False
+    return False
 
 # OK messages
-def ok(text):
+def ok(text): # pylint: disable=invalid-name
     """print an OK message"""
     print(f"\033[32mOK\033[m: {text}")
     return True
@@ -40,13 +39,13 @@ def die(text):
     sys.exit(1)
 
 # hardware output
-def hw(settings):
+def hw(settings): # pylint: disable=invalid-name
     """display the list of remote destinations configured in settings"""
-    for key,value in enumerate(settings['remote_hw']):
+    for _,value in enumerate(settings['remote_hw']):
         print(f"\n\033[1mremote\033[m: {value}")
         # remote hardware will always be useful
-        x = settings['remote_hw'][value]
-        print(f"\t({x['name']})")
-        print(f"\t{x['protocol']}@{x['ip_addr']}:{x['port']}")
-        print(f"\t{x['rom_path']}")
+        remote = settings['remote_hw'][value]
+        print(f"\t({remote['name']})")
+        print(f"\t{remote['protocol']}@{remote['ip_addr']}:{remote['port']}")
+        print(f"\t{remote['rom_path']}")
     sys.exit(0)
