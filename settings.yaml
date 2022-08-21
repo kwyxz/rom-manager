@@ -28,6 +28,7 @@ banned_words:
   - 'Switch Online'
   - 'Sega Channel'
   - 'Classic Collection'
+  - '(Test Program)'
 
 remote_hw:
   deck:
