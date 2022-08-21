@@ -24,11 +24,10 @@ def main(args,conf):
         remote_hw = conf['remote_hw'][args.remote]
         try:
             if args.console:
-                for local_folder in args.console:
+                for local_folder in args.console[0]:
                     console.sync(local_folder,remote_hw,conf['banned_words'],conf['country_list'],DEBUG)
             elif args.arcade:
-                for gamelist in args.arcade:
-                    curate_arcaderoms(gamelist)
+                    arcade.curate(args.arcade[0],remote_hw,conf['mame_rom_path'],conf['mame_data_file'],DEBUG)
             else:
                 msg.die(f"argument error")
         except KeyError:

@@ -1,7 +1,8 @@
 # settings for rom-manager
 
 mame_data_file: '/usr/local/games/mame/mame.xml'
-fbneo_data_file: '/usr/local/games/fbneo/support/lists/dat/FBNeo_-_Arcade.dat'
+#fbneo_data_file: '/usr/local/games/fbneo/support/lists/dat/FBNeo_-_Arcade.dat'
+mame_rom_path: '/mnt/space/Games/mame/'
 
 country_list:
   - 'USA'

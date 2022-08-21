@@ -1,13 +1,22 @@
 #!/usr/bin/env python3
 
-import xml.dom.minidom
+import xml.etree.ElementTree as ET
 
-MAMEXML='./shortmame.xml'
+MAMEXML='/usr/local/games/mame/mame.xml'
+#MAMEXML='./shortmame.xml'
 
-class MachineParse(object):
+with open(MAMEXML) as xmlfile:
+  xmlstring = xmlfile.read()
 
-  def __init__(self,is_clone,source):
-    self.name = name
-    self.description = description
-    self.is_clone = is_clone
-    self.source = source
+root = ET.fromstring(xmlstring)
+
+#root.findall(".//*[@name='ffight'/")
+
+print(root.findall(".//*[@name='ffight']")[0].attrib['sourcefile'])
+
+for node in root.findall(".//*[@sourcefile='capcom/cps1.cpp']"):
+  try:
+    if node.attrib['cloneof']:
+      print(f"CLONE: {node.attrib['name']}")
+  except KeyError:
+    print(f"NAME: {node.attrib['name']}")

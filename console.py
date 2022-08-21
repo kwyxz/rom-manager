@@ -78,23 +78,29 @@ def find_country(game,country_list,country_index):
             return find_country(game,country_list,country_index+1)
 
 # select rom by country and revision
-def select_unique(folder,country_list):
+def select_unique(gamelist,country_list):
     dumps = []
     """find the most appropriate dump for each game"""
-    for game in folder:
+    for game in gamelist:
         # start with the first country in the list
         best = find_revision(find_country(game,country_list,0))
         dumps.append(best)
     return dumps
 
+def trim_path(folder):
+    if folder[-1] == '/':
+        folder = folder.rstrip(folder[-1])
+    return folder.split('/')[-1]
+
 # main sync functions
-def sync(local_folder,remote,banned_words,country_list,debug):
+def sync(folder,remote,banned_words,country_list,debug):
+    local_folder = os.path.abspath(folder)
     """sync selected console roms to remote folder"""
     # list all roms in folder and remove some based on keywords
-    romlist = purge(os.listdir(local_folder[0]),banned_words,debug)
+    romlist = purge(os.listdir(local_folder),banned_words,debug)
     # sort list
     romlist.sort()
     # create sets by game and select unique one
     romset = select_unique(create_sets(romlist),country_list)
     # push romsets once they have been curated
-    remote_host.pushromset(romset,local_folder[0],remote,debug)
+    remote_host.pushromset(romset,local_folder,remote['rom_path'] + '/' + trim_path(local_folder),remote,debug)

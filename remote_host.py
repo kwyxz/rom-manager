@@ -8,27 +8,30 @@ import os
 import paramiko
 import msg
 
-def trim_path(folder):
-    if folder[-1] == '/':
-        folder = folder.rstrip(folder[-1])
-    return folder.split('/')[-1]
-
-def push_romset_ssh(romset,folder,dest,ip,port,user,debug):
+def push_romset_ssh(romset,local,dest,ip,port,user,debug):
     sshcon = paramiko.SSHClient()
     sshcon.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
         msg.debug(f"Connecting to {user}@{ip}:{port}{dest}",debug)
         sshcon.connect(ip, port=port, username=user)
         sftp=sshcon.open_sftp()
-        remote_folder = dest + '/' + trim_path(folder)
-        try:
-            sftp.stat(remote_folder)
-        except FileNotFoundError:
-            sftp.mkdir(remote_folder)
-            msg.debug(f"creating remote folder {remote_folder}",debug)
         for rom in romset:
-            local_rom = folder + '/' + rom
-            remote_rom = remote_folder + '/' + rom
+            try:
+                sftp.stat(dest)
+            except FileNotFoundError:
+                sftp.mkdir(dest)
+                msg.debug(f"creating remote folder {dest}",debug)
+            if '/' in rom:
+                try:
+                    chdfolder = rom.split('/')[0]
+                    sftp.stat(dest + '/' + chdfolder)
+                except FileNotFoundError:
+                    sftp.mkdir(dest + '/' + chdfolder)
+                    msg.debug(f"creating remote folder {dest + '/' + chdfolder}",debug)
+            # if we have a / in the rom name we are dealing with a chd
+            local_rom = local + '/' + rom
+            remote_rom = dest + '/' + rom
+            msg.debug(f"local={local_rom},remote={remote_rom}",debug)
             try:
                 sftp.stat(remote_rom)
                 msg.info(f"SKIPPED: already present {remote_rom}")
@@ -41,10 +44,10 @@ def push_romset_ssh(romset,folder,dest,ip,port,user,debug):
 def push_romset_ftp(folder,rom,remote):
     msg.debug(f"FTP push to {remote['user']}@{remote['ip_addr']}:{remote['port']}/{remote['rom_path']}")
 
-def pushromset(romset,folder,remote,debug):
+def pushromset(romset,local,folder,remote,debug):
     # remote is exclusive in options
     if remote['protocol'] == 'ssh':
-        push_romset_ssh(romset,folder,remote['rom_path'],remote['ip_addr'],remote['port'],remote['user'],debug)
+        push_romset_ssh(romset,local,folder,remote['ip_addr'],remote['port'],remote['user'],debug)
     elif remote['protocol'] == 'ftp':
         push_romset_ftp(romset,folder,remote)
     else:
