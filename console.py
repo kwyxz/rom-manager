@@ -96,9 +96,5 @@ def sync(local_folder,remote,banned_words,country_list,debug):
     romlist.sort()
     # create sets by game and select unique one
     romset = select_unique(create_sets(romlist),country_list)
+    # push romsets once they have been curated
     remote_host.pushromset(romset,local_folder[0],remote,debug)
-    # push every rom in the romset
-    # for rom in romset:
-    #     local_rom = local_folder[0] + '/' + rom
-    #     remote_rom = remote['rom_path'] + '/' + trim_path(local_folder[0]) + '/' + rom
-    #     remote_host.push(local_rom,remote_rom,remote)
