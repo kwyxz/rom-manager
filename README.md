@@ -11,3 +11,6 @@ A MAME xml file is necessary. Either download one, or create it using the MAME b
 
 # configuration
 Some default settings are set in settings.yaml. To customize them, copy the file to your $HOME/.config/ and update it.
+
+# usage
+Run `rom_manager.py -h` for a list of options
