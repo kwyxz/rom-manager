@@ -43,4 +43,4 @@ remote_hw:
     ip_addr: '192.168.1.12'
     port: '1337'
     user: 'anonymous'
-    rom_path: 'uma0:/roms'
+    rom_path: '/uma0:/roms'

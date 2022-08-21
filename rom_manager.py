@@ -25,7 +25,7 @@ def main(args,conf):
         try:
             if args.console:
                 for local_folder in args.console:
-                    console.sync(local_folder,remote_hw,conf,DEBUG)
+                    console.sync(local_folder,remote_hw,conf['banned_words'],conf['country_list'],DEBUG)
             elif args.arcade:
                 for gamelist in args.arcade:
                     curate_arcaderoms(gamelist)
