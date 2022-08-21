@@ -101,8 +101,6 @@ def sync(local_folder,remote,conf,debug):
     romlist.sort()
     # create sets by game and select unique one
     romset = select_unique(create_sets(romlist),conf)
-    # create remote rompath
-
     # push every rom in the romset
     for rom in romset:
         local_rom = local_folder[0] + '/' + rom
