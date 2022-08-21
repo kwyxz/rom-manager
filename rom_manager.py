@@ -27,7 +27,7 @@ def main(args,conf):
                 for local_folder in args.console[0]:
                     console.sync(local_folder,remote_hw,conf['banned_words'],conf['country_list'],DEBUG)
             elif args.arcade:
-                    arcade.curate(args.arcade[0],remote_hw,conf['mame_rom_path'],conf['mame_data_file'],DEBUG)
+                    arcade.curate(args.arcade[0],remote_hw,conf['banned_arcade_games'],conf['mame_rom_path'],conf['mame_data_file'],DEBUG)
             else:
                 msg.die(f"argument error")
         except KeyError:

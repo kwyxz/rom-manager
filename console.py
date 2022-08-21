@@ -12,7 +12,7 @@ import msg
 import remote_host
 
 # expunge roms by keyword
-def purge(romlist, banned,debug):
+def purge(romlist,banned,debug):
     """remove roms using word from banned list in their filename"""
     clean = []
     for rom in romlist:
@@ -22,26 +22,29 @@ def purge(romlist, banned,debug):
                 found = True
                 break
         if found:
-            msg.debug(f"banned rom {rom} due to keyword {key}",debug)
+            msg.debug(f"SKIPPED:\tgame {rom}, keyword {key}",debug)
         else:
             clean.append(rom)
     return clean
 
 # extract base name to create sets of similar game
-def extract_basename(rom):
+def extract_basename(rom,debug):
     """extract base rom name from file name"""
-    return rom.split('(')[0] + '('
+    base_name = rom.split('(')[0] + '('
+    msg.debug(f"FOUND:\tbase name is {base_name}",debug)
+    return base_name
 
-def create_sets(romlist):
+def create_sets(romlist,debug):
     """create sets per unique names"""
     fullset = []
     previous_basename = ''
     for rom in romlist:
-        basename = extract_basename(rom)
+        basename = extract_basename(rom,debug)
         if basename != previous_basename:
             gameset = []
             for rom in romlist:
                 if basename in rom:
+                    msg.debug(f"FOUND:\tadding rom {rom}",debug)
                     gameset.append(rom)
                     previous_basename = basename
             fullset.append(gameset)
@@ -101,6 +104,6 @@ def sync(folder,remote,banned_words,country_list,debug):
     # sort list
     romlist.sort()
     # create sets by game and select unique one
-    romset = select_unique(create_sets(romlist),country_list)
+    romset = select_unique(create_sets(romlist,debug),country_list)
     # push romsets once they have been curated
     remote_host.pushromset(romset,local_folder,remote['rom_path'] + '/' + trim_path(local_folder),remote,debug)
