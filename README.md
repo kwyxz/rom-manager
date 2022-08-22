@@ -19,7 +19,7 @@ With arcade games, it will:
  - select all games running on the same hardware ; the rationale is if I enjoyed a game by developer X on hardware Y, there is a chance I might enjoy another game (often by the same developer) on hardware Y
  - trim out clones / bootlegs that nobody needs
  - trim out games from a banned list (configurable)
- - push everything to the remote device
+ - push the resulting list of games the remote device
 
 # requirements
 - python3
