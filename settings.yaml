@@ -30,6 +30,7 @@ country_list:
 banned_words:
   - 'BIOS'
   - 'Enhancement Chip'
+  - 'Homebrew'
   - '(Unl'
   - '(Demo'
   - '(Hack'

@@ -51,8 +51,9 @@ def create_sets(romlist,debug):
     return fullset
 
 # select rom by revision
-def find_revision(game):
+def find_revision(game,debug):
     """find most recent revision of game"""
+    msg.debug(f"Looking at {game}",debug)
     game.sort()
     revisions = []
     for rom in game:
@@ -82,12 +83,12 @@ def find_country(game,country_list,country_index):
         return find_country(game,country_list,country_index+1)
 
 # select rom by country and revision
-def select_unique(gamelist,country_list):
+def select_unique(gamelist,country_list,debug):
     """find the most appropriate dump for each game"""
     dumps = []
     for game in gamelist:
         # start with the first country in the list
-        best = find_revision(find_country(game,country_list,0))
+        best = find_revision(find_country(game,country_list,0),debug)
         dumps.append(best)
     return dumps
 
@@ -106,7 +107,7 @@ def sync(folder,remote,banned_words,country_list,debug):
     # sort list
     romlist.sort()
     # create sets by game and select unique one
-    romset = select_unique(create_sets(romlist,debug),country_list)
+    romset = select_unique(create_sets(romlist,debug),country_list,debug)
     # push romsets once they have been curated
     remote_host.pushromset(
         romset,

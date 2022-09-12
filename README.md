@@ -40,9 +40,9 @@ Send all SNES roms from a folder to a Steamdeck:
 ```
 $ rom_manager.py -r deck -c ~/Games/snes
 ```
-Find all games running on the same hardware as Final Fight and send them to a Raspberry Pi:
+Find all arcade games running on the same hardware as Final Fight and send them to a Raspberry Pi:
 ```
-$ rom_manager.py -r pi -c ffight
+$ rom_manager.py -r pi -a ffight
 ```
 
 # todo
