@@ -11,6 +11,7 @@ It takes two different approaches depending on whether we are dealing with conso
 With console games, it will:
  - browse a folder full of games
  - look for a unique name amongst various regional variants
+ - yes, this will still leave tons of duplicates, because there is no way any simple tool can know that "Dai Makai-Mura" is the same game as "Ghouls 'n Ghosts" without going through a curated database and no, I won't create one
  - trim out versions based off a configurable banned keyword list (like Demo, Beta, etc)
  - pick up the most interesting region following a configurable order
  - in my case, this means first USA (60Hz and english language) > France (I am french) > Europe > World > Japan (last resort when no other exist) ; again this is of course configurable
@@ -49,4 +50,6 @@ $ rom_manager.py -r pi -a ffight
 ```
 
 # todo
-Implement FTP push (for Vita and other devices that do not run SSH)
+- generate playlists for RetroArch
+- generate playlists for Attract-Mode
+- prefer translations for console games when available
