@@ -15,9 +15,10 @@ remote_hw:
   vita:
     name: 'Playstation Vita'
     protocol: 'ftp'
-    ip_addr: '192.168.1.12'
+    ip_addr: '192.168.1.39'
     port: '1337'
     user: 'anonymous'
+    passwd: 'nobody@nowhere.invalid'
     rom_path: '/uma0:/roms'
 
 country_list:
