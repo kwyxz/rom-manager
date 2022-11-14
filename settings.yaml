@@ -674,11 +674,15 @@ banned_arcade_games:
   - bakutotu
   - ballbros
   - blazer
+  - blitz
+  - blitz99
+  - blitz2k
   - boxyboy
   - brain
   - bubbletr
   - bwcasino
   - cannonbp
+  - carnevil
   - catacomb
   - chinatwn
   - cleopatr
@@ -718,6 +722,8 @@ banned_arcade_games:
   - finalttr
   - finehour
   - gardia
+  - gauntdl
+  - gauntleg
   - godzilla
   - gollygho
   - gulunpa
@@ -770,6 +776,9 @@ banned_arcade_games:
   - moshougi
   - mplanets
   - mrtnt
+  - nbagold
+  - nbanfl
+  - nbashowt
   - neobattl
   - netmerc
   - nob
@@ -812,9 +821,14 @@ banned_arcade_games:
   - sbm
   - scross
   - sdtennis
+  - sf2049
+  - sf2049se
+  - sf2049te
   - sf2t
   - sfposeid
   - sfx
+  - sfrush
+  - sfrushrk
   - sfzch
   - sgmast
   - sgunner
