@@ -12,7 +12,10 @@ import remote_host
 def find_machine(game,root,debug):
     """looking for hardware a game runs on"""
     msg.debug(f"CHECK:\thardware for {game}",debug)
-    return root.findall(f".//machine[@name='{game}']")[0].attrib['sourcefile']
+    try:
+        return root.findall(f".//machine[@name='{game}']")[0].attrib['sourcefile']
+    except IndexError:
+        msg.die(f"game {game} not found in MAME database")
 
 def find_by_machine(machine,root,banned,rompath,debug):
     """list all games running on a hardware"""
