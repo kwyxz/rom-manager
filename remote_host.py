@@ -16,7 +16,7 @@ def push_romset_ssh(romset,local,dest,ip_addr,port,user,debug): # pylint: disabl
     try:
         msg.debug(f"SSH:\tconnecting to {user}@{ip_addr}:{port}{dest}",debug)
         sshcon.connect(ip_addr, port=port, username=user)
-        msg.ok("SSH:\tconnected to {user}@{ip_addr}:{port}{dest}")
+        msg.ok(f"SSH:\tconnected to {user}@{ip_addr}:{port}{dest}")
         sftp=sshcon.open_sftp()
         for rom in romset:
             try:
