@@ -42,10 +42,9 @@ def die(text):
 def hw(settings): # pylint: disable=invalid-name
     """display the list of remote destinations configured in settings"""
     for _,value in enumerate(settings['remote_hw']):
-        print(f"\n\033[1mremote\033[m: {value}")
         # remote hardware will always be useful
         remote = settings['remote_hw'][value]
-        print(f"\t({remote['name']})")
+        print(f"\n\033[1mremote\033[m: {value} ({remote['name']})")
         print(f"\t{remote['protocol']}@{remote['ip_addr']}:{remote['port']}")
         print(f"\t{remote['rom_path']}")
     sys.exit(0)
