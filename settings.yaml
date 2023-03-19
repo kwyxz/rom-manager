@@ -20,6 +20,13 @@ remote_hw:
     user: 'anonymous'
     passwd: 'nobody@nowhere.invalid'
     rom_path: '/uma0:/roms'
+  pi4:
+    name: 'Raspberry Pi 4'
+    protocol: 'ssh'
+    ip_addr: '192.168.1.21'
+    port: '22'
+    user: 'pi'
+    rom_path: '/home/pi/roms'
 
 country_list:
   - 'USA'
