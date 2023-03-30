@@ -56,10 +56,26 @@ def find_revision(game,debug):
     msg.debug(f"Looking at {game}",debug)
     game.sort()
     revisions = []
+    translations = []
+    adds = []
     for rom in game:
-        # find revisions
-        if '(Rev' in rom:
+        # find revisions or versions
+        if '(Rev' or '(v.' in rom:
             revisions.append(rom)
+        # find translations of Japanese games
+        if ('Japan' and '[T-En') in rom:
+            translations.append(rom)
+        # find addendums to translations
+        if ('Japan' and '[T-En' and '[Add') in rom:
+            adds.append(rom)
+    if len(adds)>0:
+        adds.sort()
+        # use the latest add to translation
+        return adds[-1]
+    if len(translations)>0:
+        translations.sort()
+        # use the latest translation
+        return translations[-1]
     if len(revisions)>0:
         revisions.sort()
         # use the latest revision
