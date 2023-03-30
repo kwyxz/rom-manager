@@ -28,6 +28,8 @@ remote_hw:
     user: 'pi'
     rom_path: '/home/pi/roms'
 
+allow_translations: True
+
 country_list:
   - 'USA'
   - 'France'

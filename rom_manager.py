@@ -27,6 +27,7 @@ def main(args,conf):
                         remote_hw,
                         conf['banned_words'],
                         conf['country_list'],
+                        conf['allow_translations'],
                         debug
                     )
             elif args.arcade:

@@ -51,31 +51,34 @@ def create_sets(romlist,debug):
     return fullset
 
 # select rom by revision
-def find_revision(game,debug):
+def find_revision(game,allow_translations,debug):
     """find most recent revision of game"""
     msg.debug(f"Looking at {game}",debug)
     game.sort()
     revisions = []
-    translations = []
-    adds = []
+    if allow_translations:
+        translations = []
+        adds = []
     for rom in game:
         # find revisions or versions
         if '(Rev' or '(v.' in rom:
             revisions.append(rom)
-        # find translations of Japanese games
-        if ('Japan' and '[T-En') in rom:
-            translations.append(rom)
-        # find addendums to translations
-        if ('Japan' and '[T-En' and '[Add') in rom:
-            adds.append(rom)
-    if len(adds)>0:
-        adds.sort()
-        # use the latest add to translation
-        return adds[-1]
-    if len(translations)>0:
-        translations.sort()
-        # use the latest translation
-        return translations[-1]
+        if allow_translations:
+            # find translations of Japanese games
+            if ('Japan' and '[T-En') in rom:
+                translations.append(rom)
+            # find addendums to translations
+            if ('Japan' and '[T-En' and '[Add') in rom:
+                adds.append(rom)
+    if allow_translations:
+        if len(adds)>0:
+            adds.sort()
+            # use the latest add to translation
+            return adds[-1]
+        if len(translations)>0:
+            translations.sort()
+            # use the latest translation
+            return translations[-1]
     if len(revisions)>0:
         revisions.sort()
         # use the latest revision
@@ -99,12 +102,12 @@ def find_country(game,country_list,country_index):
         return find_country(game,country_list,country_index+1)
 
 # select rom by country and revision
-def select_unique(gamelist,country_list,debug):
+def select_unique(gamelist,country_list,allow_translations,debug):
     """find the most appropriate dump for each game"""
     dumps = []
     for game in gamelist:
         # start with the first country in the list
-        best = find_revision(find_country(game,country_list,0),debug)
+        best = find_revision(find_country(game,country_list,0),allow_translations,debug)
         dumps.append(best)
     return dumps
 
@@ -115,7 +118,7 @@ def trim_path(folder):
     return folder.split('/')[-1]
 
 # main sync functions
-def sync(folder,remote,banned_words,country_list,debug):
+def sync(folder,remote,banned_words,country_list,allow_translations,debug):
     """sync selected console roms to remote folder"""
     local_folder = os.path.abspath(folder)
     # list all roms in folder and remove some based on keywords
@@ -123,7 +126,7 @@ def sync(folder,remote,banned_words,country_list,debug):
     # sort list
     romlist.sort()
     # create sets by game and select unique one
-    romset = select_unique(create_sets(romlist,debug),country_list,debug)
+    romset = select_unique(create_sets(romlist,debug),country_list,allow_translations,debug)
     # push romsets once they have been curated
     remote_host.pushromset(
         romset,
