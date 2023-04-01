@@ -54,6 +54,8 @@ banned_words:
   - '(Germany)'
   - '(Italy)'
   - '(Spain)'
+  - '(Brazil)'
+  - '(Asia)'
   - 'Virtual Console'
   - 'Switch Online'
   - 'Sega Channel'
