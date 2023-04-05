@@ -37,6 +37,8 @@ def main(args,conf):
                     conf['banned_arcade_games'],
                     conf['mame_rom_path'],
                     conf['mame_data_file'],
+                    conf['mame_merged_roms'],
+                    conf['replace_roms'],
                     debug
                 )
             else:

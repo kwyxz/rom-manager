@@ -5,6 +5,7 @@ handle everything related to pushing things to a remote destination
 """
 
 import msg
+import os
 import paramiko
 import ftplib
 from ftplib import FTP
@@ -39,8 +40,9 @@ def push_romset_ssh(romset,local,dest,ip_addr,port,user,debug): # pylint: disabl
                 sftp.stat(remote_rom)
                 msg.info(f"SKIPPED:\talready present {remote_rom}")
             except FileNotFoundError:
-                sftp.put(local_rom,remote_rom,callback=None,confirm=True)
-                msg.ok(f"PUSHED:\t{remote_rom}")
+                if os.path.exists(local_rom):
+                    sftp.put(local_rom,remote_rom,callback=None,confirm=True)
+                    msg.ok(f"PUSHED:\t{remote_rom}")
     except paramiko.ssh_exception.NoValidConnectionsError:
         msg.die(f"SSH:\tunable to connect to remote host, check the network parameters")
     sshcon.close()
