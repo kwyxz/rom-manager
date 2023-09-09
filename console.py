@@ -40,7 +40,7 @@ def create_sets(romlist,debug):
     previous_basename = ''
     for rom in romlist:
         basename = extract_basename(rom,debug)
-        if basename != previous_basename:
+        if basename.lower() != previous_basename.lower():
             gameset = []
             for game in romlist:
                 if basename in game:
