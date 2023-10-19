@@ -34,11 +34,11 @@ def find_by_machine(machine,root,banned,rompath,merged,replace,debug):
             if game.attrib['cloneof']:
                 msg.debug(f"SKIPPED:\tclone {game.attrib['name']}",debug)
         except KeyError:
-            msg.debug(f"FOUND:\tgame {game.attrib['name']}",debug)
             gamename = game.attrib['name']
             if gamename in banned:
                 msg.debug(f"SKIPPED:\tbanned {gamename}",debug)
             else:
+                msg.debug(f"FOUND:\tgame {game.attrib['name']}",debug)
                 if not merged:
                     # look if a replacement exists for 4-player games
                     gamename = replace_game(gamename,replace,debug)
