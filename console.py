@@ -48,7 +48,7 @@ def create_sets(romlist,debug):
         if basename.lower() != previous_basename.lower():
             gameset = []
             for game in romlist:
-                if basename in game:
+                if game.startswith(basename):
                     msg.debug(f"FOUND:\tadding rom {game}",debug)
                     gameset.append(game)
                     previous_basename = basename
