@@ -30,9 +30,14 @@ def purge(romlist,banned,debug):
 # extract base name to create sets of similar game
 def extract_basename(rom,debug):
     """extract base rom name from file name"""
-    base_name = rom.split('(')[0] + '('
-    msg.debug(f"FOUND:\tbase name is {base_name}",debug)
-    return base_name
+    if '(' in rom:
+        base_name = rom.split('(')[0] + '('
+        msg.debug(f"FOUND:\tbase name is {base_name}",debug)
+        return base_name
+    else:
+        base_name = rom.split('.')[0]
+        msg.debug(f"FOUND:\tno country specified, basename is {base_name}",debug)
+        return base_name
 
 def create_sets(romlist,debug):
     """create sets per unique names"""
