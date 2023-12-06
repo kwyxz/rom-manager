@@ -61,12 +61,13 @@ def find_revision(game,allow_translations,debug):
     msg.debug(f"Looking at {game}",debug)
     game.sort()
     revisions = []
+    multidisc = []
     if allow_translations:
         translations = []
         adds = []
     for rom in game:
         # find revisions or versions
-        if '(Rev' or '(v.' in rom:
+        if ('(Rev' or '(v.') in rom:
             revisions.append(rom)
         if allow_translations:
             # find translations of Japanese games
@@ -112,8 +113,14 @@ def select_unique(gamelist,country_list,allow_translations,debug):
     dumps = []
     for game in gamelist:
         # start with the first country in the list
-        best = find_revision(find_country(game,country_list,0),allow_translations,debug)
-        dumps.append(best)
+        country = find_country(game,country_list,0)
+        if ('(Disc' or '(Disk') in country[0]:
+            msg.debug(f"Multi-disk game found : {country}",debug)
+            for disc in country:
+                dumps.append(disc)
+        else:
+            best = find_revision(country,allow_translations,debug)
+            dumps.append(best)
     return dumps
 
 def trim_path(folder):
@@ -123,7 +130,7 @@ def trim_path(folder):
     return folder.split('/')[-1]
 
 # main sync functions
-def sync(folder,remote,banned_words,country_list,allow_translations,debug):
+def sync(folder,remote,banned_words,country_list,allow_translations,debug,noop):
     """sync selected console roms to remote folder"""
     local_folder = os.path.abspath(folder)
     # list all roms in folder and remove some based on keywords
@@ -132,10 +139,14 @@ def sync(folder,remote,banned_words,country_list,allow_translations,debug):
     romlist.sort()
     # create sets by game and select unique one
     romset = select_unique(create_sets(romlist,debug),country_list,allow_translations,debug)
-    # push romsets once they have been curated
-    remote_host.pushromset(
-        romset,
-        local_folder,
-        remote['rom_path'] + '/' + trim_path(local_folder),
-        remote,debug
-    )
+    if noop:
+        for rom in romset:
+            print(rom)
+    else:
+        # push romsets once they have been curated
+        remote_host.pushromset(
+            romset,
+            local_folder,
+            remote['rom_path'] + '/' + trim_path(local_folder),
+            remote,debug
+        )
