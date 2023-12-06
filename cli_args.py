@@ -18,6 +18,12 @@ def parse():
     """the parsing mechanism"""
     parser = argparse.ArgumentParser(description="Manage romsets on handheld devices")
     parser.add_argument(
+        '-n',
+        '--noop',
+        action='store_true',
+        help='do not actually upload anything, only display projected upload'
+    )
+    parser.add_argument(
         '-v',
         '--verbose',
         action='store_true',

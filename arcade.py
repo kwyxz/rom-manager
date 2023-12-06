@@ -50,7 +50,7 @@ def find_by_machine(machine,root,banned,rompath,merged,replace,debug):
                 games.append(gamename + '.zip')
     return games
 
-def curate(gamelist,remote,banned,mamerompath,mamexml,merged,replace,debug): # pylint: disable=too-many-arguments
+def curate(gamelist,remote,banned,mamerompath,mamexml,merged,replace,debug,noop): # pylint: disable=too-many-arguments
     """sync selected arcade roms to remote folder"""
     # open the XML file
     msg.debug(f"CHECK:\tMAME data source {mamexml}",debug)
@@ -74,5 +74,14 @@ def curate(gamelist,remote,banned,mamerompath,mamexml,merged,replace,debug): # p
         romset = romset + machine_games
     # there should not be any duplicates yet but just to play it safe
     sorted_set = sorted(set(romset))
-    print(sorted_set)
-    remote_host.pushromset(sorted_set,mamerompath,remote['rom_path'] + '/' + 'arcade/',remote,debug)
+    if noop:
+        for rom in romset:
+            print(rom)
+    else:
+        remote_host.pushromset(
+            sorted_set,
+            mamerompath,
+            remote['rom_path'] + '/' + 'arcade/',
+            remote,
+            debug
+        )

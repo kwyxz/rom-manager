@@ -14,6 +14,7 @@ import console
 def main(args,conf):
     """main function"""
     debug = args.verbose
+    noop = args.noop
     # read the other arguments
     if args.listhw:
         msg.hw(conf)
@@ -28,7 +29,8 @@ def main(args,conf):
                         conf['banned_words'],
                         conf['country_list'],
                         conf['allow_translations'],
-                        debug
+                        debug,
+                        noop
                     )
             elif args.arcade:
                 arcade.curate(
@@ -39,7 +41,8 @@ def main(args,conf):
                     conf['mame_data_file'],
                     conf['mame_merged_roms'],
                     conf['replace_roms'],
-                    debug
+                    debug,
+                    noop
                 )
             else:
                 msg.die("argument error")
