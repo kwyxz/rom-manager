@@ -22,7 +22,10 @@ def info(text):
 def debug(text,flag):
     """print only in verbose mode"""
     if flag:
-        print(f"\033[33mDEBUG\033[m: {text}")
+        try:
+            print(f"\033[33mDEBUG\033[m: {text}")
+        except UnicodeEncodeError:
+            print(f"\033[31mERROR\033[m: encoding error with file name (skipping debug)")
         return True
     return False
 

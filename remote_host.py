@@ -7,8 +7,34 @@ handle everything related to pushing things to a remote destination
 import msg
 import os
 import paramiko
+import shutil
 import ftplib
 from ftplib import FTP
+
+def push_romset_local(romset,local,dest,debug):
+    """push romset locally to another folder"""
+    msg.debug(f"LOCAL:\tpushing to ROM folder {local}",debug)
+    os.makedirs(dest, mode=0o0755, exist_ok=True)
+    for rom in romset:
+        # if we have a / in the rom name we are dealing with a CHD
+        if '/' in rom:
+            chdfolder = rom.split('/')[0]
+            os.makedirs(dest + '/' + chdfolder, mode=0o0755, exist_ok=True)
+            msg.debug(f"LOCAL:\tcreated local folder {dest + '/' + chdfolder}",debug)
+        local_rom = local + '/' + rom
+        remote_rom = dest + '/' + rom
+        msg.debug(f"LOCAL:\tcopy local={local_rom},remote={remote_rom}",debug)
+        if os.path.isfile(remote_rom):
+            msg.debug(f"SKIPPED:\talready present {remote_rom}",debug)
+        else:
+            if os.path.isfile(local_rom):
+                try:
+                    msg.debug(f"LOCAL:\tcopy {local_rom}",debug)
+                    shutil.copyfile(local_rom,remote_rom)
+                    msg.ok(f"LOCAL:\tcopied {remote_rom}")
+                except IOError:
+                    msg.die(f"{remote_rom} is identical to {local_rom}")
+    msg.ok(f"LOCAL:\t{dest}")
 
 def push_romset_ssh(romset,local,dest,ip_addr,port,user,debug): # pylint: disable=too-many-arguments
     """push romset using SSH"""
@@ -19,13 +45,13 @@ def push_romset_ssh(romset,local,dest,ip_addr,port,user,debug): # pylint: disabl
         sshcon.connect(ip_addr, port=port, username=user)
         msg.ok(f"SSH:\tconnected to {user}@{ip_addr}:{port}{dest}")
         sftp=sshcon.open_sftp()
+        try:
+            sftp.stat(dest)
+        except FileNotFoundError:
+            sftp.mkdir(dest)
+            msg.debug(f"SSH:\tcreated remote folder {dest}",debug)
         for rom in romset:
-            try:
-                sftp.stat(dest)
-            except FileNotFoundError:
-                sftp.mkdir(dest)
-                msg.debug(f"SSH:\tcreated remote folder {dest}",debug)
-            # if we have a / in the rom name we are dealing with a chd
+            # if we have a / in the rom name we are dealing with a CHD
             if '/' in rom:
                 try:
                     chdfolder = rom.split('/')[0]
@@ -57,13 +83,13 @@ def push_romset_ftp(romset,local,dest,ip_addr,port,user,passwd,debug): # pylint:
         msg.ok(f"FTP:\tconnected to to {ip_addr}:{port}")
         msg.debug(f"FTP:\tlogin={user},password={passwd}",debug)
         ftp.login(user=user,passwd=passwd)
+        try:
+            ftp.size(dest)
+        except ftplib.error_perm:
+            ftp.mkd(dest)
+            msg.debug(f"FTP:\tcreated folder {dest}",debug)
         for rom in romset:
-            try:
-                ftp.size(dest)
-            except ftplib.error_perm:
-                ftp.mkd(dest)
-                msg.debug(f"FTP:\tcreated folder {dest}",debug)
-            # if we have a / in the rom name we are dealing with a chd
+            # if we have a / in the rom name we are dealing with a CHD
             if '/' in rom:
                 try:
                     chdfolder = rom.split('/')[0]
@@ -96,5 +122,7 @@ def pushromset(romset,local,folder,remote,debug):
             romset,local,folder,remote['ip_addr'],
             remote['port'],remote['user'],remote['passwd'],debug
         )
+    elif remote['protocol'] == 'local':
+        push_romset_local(romset,local,folder,debug)
     else:
         msg.die("something went very wrong")

@@ -27,6 +27,13 @@ remote_hw:
     port: '22'
     user: 'pi'
     rom_path: '/home/pi/roms'
+  sdcard:
+    name: 'SD Card'
+    protocol: 'local'
+    ip_addr: None
+    port: None
+    user: None
+    rom_path: '/home/user/ROMs'
 
 mame_merged_roms: True
 

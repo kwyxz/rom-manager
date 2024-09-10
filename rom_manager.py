@@ -19,8 +19,8 @@ def main(args,conf):
     if args.listhw:
         msg.hw(conf)
     else:
-        remote_hw = conf['remote_hw'][args.remote]
         try:
+            remote_hw = conf['remote_hw'][args.remote]
             if args.console:
                 for local_folder in args.console[0]:
                     console.sync(
