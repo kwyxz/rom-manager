@@ -10,6 +10,7 @@ import shutil
 import sys
 import xml.etree.ElementTree as ET
 import pathlib
+import zipfile
 
 def die(message):
     print(f"ERROR: {message}")
@@ -50,10 +51,24 @@ def find_clones(romfolder, clonedb, exclude):
             clonelist.append(f"{ROMFOLDER}/{rom.name}")
     return clonelist
 
+def build_konami(romfolder,konami2p):
+    for childrom in konami2p.keys():
+        if os.path.exists(f"{romfolder}/{konami2p[childrom]}.zip"):
+            if os.path.isdir(f"{romfolder}/{childrom}"):
+                shutil.rmtree(f"{romfolder}/{childrom}")
+            os.mkdir(f"{romfolder}/{childrom}")
+            with zipfile.ZipFile(f"{romfolder}/{childrom}.zip", 'r') as childzip:
+                childzip.extractall(path=f"{romfolder}/{childrom}")
+            with zipfile.ZipFile(f"{romfolder}/{konami2p[childrom]}.zip", 'r') as parentzip:
+                parentzip.extractall(path=f"{romfolder}/{childrom}")
+            shutil.make_archive(f"{romfolder}/{childrom}", 'zip', root_dir=f"{romfolder}/{childrom}", base_dir='.')
+            shutil.rmtree(f"{romfolder}/{childrom}")
+
 def main():
     """main loop"""
+    build_konami(ROMFOLDER,KONAMI2P)
     CLONEDB = build_db(ROOT)
-    CLONES = find_clones(ROMFOLDER,CLONEDB,EXCLUDE)
+    CLONES = find_clones(ROMFOLDER,CLONEDB,KONAMI2P)
     delete_clones(CLONES)
 
 if __name__ == "__main__":
@@ -67,7 +82,16 @@ if __name__ == "__main__":
     DATFILE=ARGS.xml[0]
     ROMFOLDER = ARGS.directory[0]
 
-    EXCLUDE = ['esckidsj', 'punkshot2', 'simpsons2p3', 'ssridersubc', 'tmnt2po', 'tmnt22pu', 'vendetta2pw', 'xmen2pu']
+    KONAMI2P = {
+        'esckidsj': 'esckids',
+        'punkshot2': 'punkshot',
+        'simpsons2p3': 'simpsons',
+        'ssridersubc': 'ssriders',
+        'tmnt2po': 'tmnt',
+        'tmnt22pu': 'tmnt2',
+        'vendetta2pw': 'vendetta',
+        'xmen2pu': 'xmen'
+    }
     try:
         TREE = ET.parse(DATFILE)
     except FileNotFoundError:
