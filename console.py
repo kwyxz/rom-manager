@@ -130,7 +130,7 @@ def trim_path(folder):
     return folder.split('/')[-1]
 
 # main sync functions
-def sync(folder,remote,banned_words,country_list,allow_translations,debug,noop):
+def sync(folder,remote,banned_words,country_list,allow_translations,hardlink,debug,noop):
     """sync selected console roms to remote folder"""
     local_folder = os.path.abspath(folder)
     # list all roms in folder and remove some based on keywords
@@ -148,5 +148,5 @@ def sync(folder,remote,banned_words,country_list,allow_translations,debug,noop):
             romset,
             local_folder,
             remote['rom_path'] + '/' + trim_path(local_folder),
-            remote,debug
+            remote,hardlink,debug
         )

@@ -29,6 +29,12 @@ def parse():
         action='store_true',
         help='print out debug messages'
     )
+    parser.add_argument(
+        '-k',
+        '--hardlink',
+        action='store_true',
+        help='create hard links instead of copying for local copies',
+    )
     hardware = parser.add_mutually_exclusive_group(required=True)
     hardware.add_argument(
         '-l',

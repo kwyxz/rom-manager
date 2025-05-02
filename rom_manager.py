@@ -20,6 +20,7 @@ def main(args,conf):
         msg.hw(conf)
     else:
         try:
+            hardlink = args.hardlink
             remote_hw = conf['remote_hw'][args.remote]
             if args.console:
                 for local_folder in args.console[0]:
@@ -29,6 +30,7 @@ def main(args,conf):
                         conf['banned_words'],
                         conf['country_list'],
                         conf['allow_translations'],
+                        hardlink,
                         debug,
                         noop
                     )
@@ -41,6 +43,7 @@ def main(args,conf):
                     conf['mame_data_file'],
                     conf['mame_merged_roms'],
                     conf['replace_roms'],
+                    hardlink,
                     debug,
                     noop
                 )

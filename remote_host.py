@@ -11,7 +11,7 @@ import shutil
 import ftplib
 from ftplib import FTP
 
-def push_romset_local(romset,local,dest,debug):
+def push_romset_local(romset,local,dest,hardlink,debug):
     """push romset locally to another folder"""
     msg.debug(f"LOCAL:\tpushing to ROM folder {local}",debug)
     os.makedirs(dest, mode=0o0755, exist_ok=True)
@@ -30,8 +30,18 @@ def push_romset_local(romset,local,dest,debug):
             if os.path.isfile(local_rom):
                 try:
                     msg.debug(f"LOCAL:\tcopy {local_rom}",debug)
-                    shutil.copyfile(local_rom,remote_rom)
-                    msg.ok(f"LOCAL:\tcopied {remote_rom}")
+                    if hardlink:
+                        try:
+                            os.link(local_rom,remote_rom)
+                            msg.ok(f"LOCAL:\tlinked {remote_rom}")
+                        except OSError:
+                            msg.error(f"unable to link {remote_rom}")
+                    else:
+                        try:
+                            shutil.copyfile(local_rom,remote_rom)
+                            msg.ok(f"LOCAL:\tcopied {remote_rom}")
+                        except:
+                            msg.error(f"unable to copy {remote_rom}")
                 except IOError:
                     msg.die(f"{remote_rom} is identical to {local_rom}")
     msg.ok(f"LOCAL:\t{dest}")
@@ -112,7 +122,7 @@ def push_romset_ftp(romset,local,dest,ip_addr,port,user,passwd,debug): # pylint:
     ftp.quit()
     msg.ok(f"FTP:\tdisconnected")
 
-def pushromset(romset,local,folder,remote,debug):
+def pushromset(romset,local,folder,remote,hardlink,debug):
     """select push protocol based on settings"""
     # remote is exclusive in options
     if remote['protocol'] == 'ssh':
@@ -123,6 +133,6 @@ def pushromset(romset,local,folder,remote,debug):
             remote['port'],remote['user'],remote['passwd'],debug
         )
     elif remote['protocol'] == 'local':
-        push_romset_local(romset,local,folder,debug)
+        push_romset_local(romset,local,folder,hardlink,debug)
     else:
         msg.die("something went very wrong")

@@ -50,7 +50,7 @@ def find_by_machine(machine,root,banned,rompath,merged,replace,debug):
                 games.append(gamename + '.zip')
     return games
 
-def curate(gamelist,remote,banned,mamerompath,mamexml,merged,replace,debug,noop): # pylint: disable=too-many-arguments
+def curate(gamelist,remote,banned,mamerompath,mamexml,merged,replace,hardlink,debug,noop): # pylint: disable=too-many-arguments
     """sync selected arcade roms to remote folder"""
     # open the XML file
     msg.debug(f"CHECK:\tMAME data source {mamexml}",debug)
@@ -82,6 +82,6 @@ def curate(gamelist,remote,banned,mamerompath,mamexml,merged,replace,debug,noop)
             sorted_set,
             mamerompath,
             remote['rom_path'] + '/' + 'arcade/',
-            remote,
+            remote, hardlink,
             debug
         )
