@@ -44,6 +44,8 @@ def push_romset_local(romset,local,dest,hardlink,debug):
                             msg.error(f"unable to copy {remote_rom}")
                 except IOError:
                     msg.die(f"{remote_rom} is identical to {local_rom}")
+            else:
+               msg.error(f"{local_rom} does not exist")
     msg.ok(f"LOCAL:\t{dest}")
 
 def push_romset_ssh(romset,local,dest,ip_addr,port,user,debug): # pylint: disable=too-many-arguments
